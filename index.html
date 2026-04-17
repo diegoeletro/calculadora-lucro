@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Lucro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2575fc">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .app {
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      width: 320px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      background: #f1f3f6;
+    }
+
+    .valor {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .percentual {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .descricao {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    .verde { color: #2ecc71; }
+    .vermelho { color: #e74c3c; }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .btn {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: #2575fc;
+      color: white;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <h2>💰 Calculadora de Lucro</h2>
+
+  <label>Preço de custo</label>
+  <input type="number" id="custo" placeholder="Ex: 10.00">
+
+  <label>Valor do repasse</label>
+  <input type="number" id="venda" placeholder="Ex: 20.00">
+
+  <div class="resultado">
+    <div id="valor" class="valor verde">R$ 0,00</div>
+    <div id="percentual" class="percentual verde">0%</div>
+    <div id="descricao" class="descricao">
+      Resultado por venda
+    </div>
+  </div>
+
+  <button class="btn" onclick="instalar()">📱 Instalar App</button>
+
+  <div class="footer">
+    Desenvolvido por DIEGO ELETRO LTDA 2026<br>
+    Contato: dsf.empresa@gmail.com<br>
+    Doação: Chave PIX (CNPJ): 17816268000107
+  </div>
+</div>
+
+<script>
+  const custoInput = document.getElementById("custo");
+  const vendaInput = document.getElementById("venda");
+
+  const valorEl = document.getElementById("valor");
+  const percentualEl = document.getElementById("percentual");
+  const descricaoEl = document.getElementById("descricao");
+
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  function instalar() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+    } else {
+      alert("No iPhone: toque em compartilhar → adicionar à tela de início");
+    }
+  }
+
+  function calcular() {
+    const custo = parseFloat(custoInput.value);
+    const venda = parseFloat(vendaInput.value);
+
+    if (isNaN(custo) || isNaN(venda) || custo <= 0) {
+      valorEl.innerText = "R$ 0,00";
+      percentualEl.innerText = "0%";
+      descricaoEl.innerText = "Resultado por venda";
+      return;
+    }
+
+    const lucro = venda - custo;
+    const percentual = (lucro / custo) * 100;
+
+    valorEl.innerText = "R$ " + lucro.toFixed(2).replace(".", ",");
+    percentualEl.innerText = percentual.toFixed(2) + "%";
+
+    if (lucro >= 0) {
+      valorEl.className = "valor verde";
+      percentualEl.className = "percentual verde";
+      descricaoEl.innerText = "Lucro por venda";
+    } else {
+      valorEl.className = "valor vermelho";
+      percentualEl.className = "percentual vermelho";
+      descricaoEl.innerText = "Prejuízo por venda";
+    }
+  }
+
+  custoInput.addEventListener("input", calcular);
+  vendaInput.addEventListener("input", calcular);
+</script>
+
+</body>
+</html>
